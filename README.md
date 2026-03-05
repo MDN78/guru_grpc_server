@@ -34,7 +34,7 @@ python -m grpc_tools.protoc -I./protos --python_out=./internal/pb --pyi_out=./in
 port `0.0.0.0:50051`
 
 - Импортируем протофайл в Postman, указав путь до нашего файла. gRPC предоставляет возможность reflection API - в
-  сервере обьявляем название сервиса и кладем туда дескриптор и подключить его - библиотека `grpc-reflection`:
+  сервере объявляем название сервиса и кладем туда дескриптор и подключаем его - библиотека `grpc-reflection`:
 ```python
 from grpc_reflection.v1alpha import reflection
 
