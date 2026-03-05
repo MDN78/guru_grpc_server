@@ -49,6 +49,11 @@ class PhotoCatalogServiceStub(object):
                 request_serializer=photocatalog__pb2.CountRequest.SerializeToString,
                 response_deserializer=photocatalog__pb2.PhotoResponse.FromString,
                 _registered_method=True)
+        self.AddPhotos = channel.stream_unary(
+                '/PhotoCatalogService/AddPhotos',
+                request_serializer=photocatalog__pb2.PhotoRequest.SerializeToString,
+                response_deserializer=photocatalog__pb2.UploadStatusResponse.FromString,
+                _registered_method=True)
 
 
 class PhotoCatalogServiceServicer(object):
@@ -72,6 +77,12 @@ class PhotoCatalogServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def AddPhotos(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PhotoCatalogServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -89,6 +100,11 @@ def add_PhotoCatalogServiceServicer_to_server(servicer, server):
                     servicer.RandomPhotos,
                     request_deserializer=photocatalog__pb2.CountRequest.FromString,
                     response_serializer=photocatalog__pb2.PhotoResponse.SerializeToString,
+            ),
+            'AddPhotos': grpc.stream_unary_rpc_method_handler(
+                    servicer.AddPhotos,
+                    request_deserializer=photocatalog__pb2.PhotoRequest.FromString,
+                    response_serializer=photocatalog__pb2.UploadStatusResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -172,6 +188,33 @@ class PhotoCatalogService(object):
             '/PhotoCatalogService/RandomPhotos',
             photocatalog__pb2.CountRequest.SerializeToString,
             photocatalog__pb2.PhotoResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AddPhotos(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(
+            request_iterator,
+            target,
+            '/PhotoCatalogService/AddPhotos',
+            photocatalog__pb2.PhotoRequest.SerializeToString,
+            photocatalog__pb2.UploadStatusResponse.FromString,
             options,
             channel_credentials,
             insecure,

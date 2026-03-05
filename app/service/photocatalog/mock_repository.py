@@ -15,6 +15,7 @@ class PhotoResponseModel(BaseModel):
     content: str
 
 
+
 class MockRepository:
     def __init__(self):
         self._photos = []

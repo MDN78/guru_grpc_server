@@ -10,6 +10,7 @@ from app.service.photocatalog.service import PhotoCatalogService
 
 
 def serve():
+    """Function for starting gRPC server"""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
     repository = MockRepository()

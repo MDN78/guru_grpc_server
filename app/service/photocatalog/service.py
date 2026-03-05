@@ -65,6 +65,51 @@ class PhotoCatalogService(photocatalog_pb2_grpc.PhotoCatalogServiceServicer):
 
         return photo_response
 
+    def AddPhotos(
+            self, request_iterator: Iterator[photocatalog_pb2.PhotoRequest], context: ServicerContext
+    ) -> photocatalog_pb2.UploadStatusResponse:
+        uploaded_ids = []
+
+        for request in request_iterator:
+            try:
+                id_ = str(uuid.uuid4())
+                photo_response = photocatalog_pb2.PhotoResponse(
+                    id=id_,
+                    description=request.description,
+                    content=request.content,
+                )
+                now = timestamp_pb2.Timestamp()
+                now.FromDatetime(datetime.datetime.now())
+                photo_response.timestamp.CopyFrom(now)
+
+                photo_model = PhotoResponseModel(
+                    id=photo_response.id,
+                    description=photo_response.description,
+                    timestamp=TimeStampModel(
+                        seconds=photo_response.timestamp.seconds,
+                        nanos=photo_response.timestamp.nanos,
+                    ),
+                    content=photo_response.content,
+                )
+                self._repository.add_photo(photo_model)
+                uploaded_ids.append(id_)
+            except Exception as e:
+                print(f"Error upload photo: {str(e)}")
+                continue
+
+        if uploaded_ids:
+            return photocatalog_pb2.UploadStatusResponse(
+                success=True,
+                message=f"Successfully uploaded {len(uploaded_ids)} photos",
+                uploaded_ids=uploaded_ids
+            )
+        else:
+            return photocatalog_pb2.UploadStatusResponse(
+                success=False,
+                message="No photos uploaded successfully",
+                uploaded_ids=[]
+            )
+
     def RandomPhotos(self, request: photocatalog_pb2.PhotoRequest,
                      context: ServicerContext) -> Iterator[photocatalog_pb2.PhotoResponse]:
         for photo in self._repository.get_random_photos(request.count):
